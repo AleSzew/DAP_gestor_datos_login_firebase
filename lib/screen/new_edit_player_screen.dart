@@ -48,25 +48,20 @@ class NewEditPlayerScreen extends ConsumerWidget {
             ElevatedButton(
               onPressed: () {
                 // Creamos el objeto con lo que haya en los campos de texto
-                final newPlayer = Player(
-                  name: nameController.text,
-                  description: descController.text,
-                  image: imageController.text,
+               final newPlayer = Player(
+               id: player?.id ?? DateTime.now().millisecondsSinceEpoch.toString(), // Si es nuevo, le genera un id único
+                name: nameController.text,
+              description: descController.text,
+            image: imageController.text,
                 );
 
                 
                 if (player == null) {
-                  // --- ESTAMOS AGREGANDO ---
-                  ref.read(playerProvider.notifier).update((state) {
-                    return [...state, newPlayer];  //copia el state y le agrega el nuevo jugador
-                  });
+                  ref.read(playerProvider.notifier).addPlayer(newPlayer);
                   context.pop(); // Volvemos a la lista
                 } else {
                   // --- ESTAMOS EDITANDO ---
-                  ref.read(playerProvider.notifier).update((state) {
-                    // Reemplazamos el viejo por el nuevo
-                    return state.map((p) => p == player ? newPlayer : p).toList(); //si el jugador es el mismo que estamos editando(p == player), lo reemplazamos por el nuevo(new player), si no, lo dejamos igual(p)
-                  });
+                  ref.read(playerProvider.notifier).updatePlayer(player!, newPlayer);
                   context.go('/players'); // Volvemos directo a la pantalla principal
                 }
               },

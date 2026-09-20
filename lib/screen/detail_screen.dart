@@ -57,7 +57,7 @@ class DetailScreen extends ConsumerWidget {
                   //  Sacamos al jugador de la lista
                   listaNueva.remove(player);
                   //  Guardamos los cambios en el provider usando el .state
-                  ref.read(playerProvider.notifier).state = listaNueva;
+                  ref.read(playerProvider.notifier).deletePlayer(player);
 
                   context.pop();
                 },

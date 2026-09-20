@@ -9,7 +9,7 @@ import '../entities/player.dart';
 
 final appRouter = GoRouter(
 
-  initialLocation: '/login',
+  initialLocation: '/players',
 
   routes: [
 
