@@ -12,13 +12,18 @@ class PlayerScreen extends ConsumerWidget {
     final List<Player> players = ref.watch(playerProvider);
 
     return Scaffold(
-      appBar: AppBar(
+            appBar: AppBar(
         title: const Text("Jugadores"),
         actions: [
           IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              context.push('/profile');
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              // Llamada manual al método del notifier como explicó el profe
               ref.read(playerProvider.notifier).getAllPlayers();
             },
           ),

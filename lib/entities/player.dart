@@ -5,36 +5,38 @@ class Player {
   String name;
   String description;
   String image;
+  String status; // <-- 1. Nuevo campo de estado
 
   Player({
     required this.id, 
     required this.name,
     required this.description,
     required this.image,
+    this.status = 'active', // 2. Por defecto activo
   });
 
-  // Convierte un objeto Player a un Map para Firebase
   Map<String, dynamic> toFirestore() {
     return {
-      'id': id, // Guarda el id como atributo adentro del documento
+      'id': id,
       'name': name,
       'description': description,
       'image': image,
+      'status': status, // <-- 3. Lo guardamos en Firestore
     };
   }
 
-  // Convierte el documento de Firebase al objeto Player
   factory Player.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
     SnapshotOptions? options,
   ) {
     final data = snapshot.data();
     return Player(
-      // Si en los campos de Firebase pusiste 'id', usa ese; si no, usa el ID propio del documento (snapshot.id)
       id: data?['id'] ?? snapshot.id, 
       name: data?['name'] ?? '',
       description: data?['description'] ?? '',
       image: data?['image'] ?? '',
+      // Si tiene 'status' o 'status ' con espacio, lo lee igual
+      status: data?['status'] ?? data?['status '] ?? 'enabled',
     );
   }
-}
+  }

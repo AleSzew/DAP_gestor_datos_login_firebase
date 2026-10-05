@@ -2,16 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import '../entities/player.dart';
 
-// Definimos el Notifier propio que maneja el estado y las operaciones asincrónicas
 class PlayerNotifier extends StateNotifier<List<Player>> {
   PlayerNotifier() : super([]) {
-    // Al instanciarse, va a buscar automáticamente los jugadores a Firebase
     getAllPlayers();
   }
 
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
-  // Función asíncrona (Future) para traer los documentos desde Firestore
+  // Trae los jugadores de Firestore filtrando los que no estén 'disabled'
   Future<void> getAllPlayers() async {
     try {
       final docs = db.collection('players').withConverter(
@@ -19,17 +17,18 @@ class PlayerNotifier extends StateNotifier<List<Player>> {
             toFirestore: (Player player, _) => player.toFirestore(),
           );
 
-      // Traemos todos los documentos de la colección
       final snapshot = await docs.get();
 
-      // Mapeamos los datos a una lista de jugadores y actualizamos el state
-      state = snapshot.docs.map((doc) => doc.data()).toList();
+      // FILTRO: Solo dejamos los que NO sean 'disabled'
+      state = snapshot.docs
+          .map((doc) => doc.data())
+          .where((player) => player.status != 'disabled')
+          .toList();
     } catch (e) {
       print("Error al traer jugadores de Firestore: $e");
     }
   }
 
-  // Métodos auxiliares para agregar, editar o eliminar localmente
   void addPlayer(Player player) {
     state = [...state, player];
   }
@@ -38,12 +37,21 @@ class PlayerNotifier extends StateNotifier<List<Player>> {
     state = state.map((p) => p == oldPlayer ? newPlayer : p).toList();
   }
 
-  void deletePlayer(Player player) {
-    state = state.where((p) => p != player).toList();
+  // Al borrar, actualiza Firestore a 'disabled' y lo saca de la pantalla
+    Future<void> deletePlayer(Player player) async {
+    try {
+      await db.collection('players').doc(player.id).update({
+        'status': 'disabled',
+        'status ': FieldValue.delete(), // Borra automáticamente el que tenía espacio si existía
+      });
+
+      state = state.where((p) => p.id != player.id).toList();
+    } catch (e) {
+      print("Error al deshabilitar en Firestore: $e");
+    }
   }
 }
 
-// Declaramos el StateNotifierProvider
 final playerProvider =
     StateNotifierProvider<PlayerNotifier, List<Player>>((ref) {
   return PlayerNotifier();

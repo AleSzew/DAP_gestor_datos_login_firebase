@@ -59,6 +59,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     if (i.email == emailController.text &&
                         i.password == passwordController.text) {
                       correcto = true;
+                       ref.read(currentUserProvider.notifier).state = i;
                       break; 
                     }
                   }

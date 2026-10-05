@@ -5,7 +5,7 @@ import 'package:dap_gester_datos_login/screen/new_user_screen.dart';
 import 'package:dap_gester_datos_login/screen/player_screen.dart';
 import 'package:go_router/go_router.dart';
 import '../entities/player.dart';
-
+import 'package:dap_gester_datos_login/screen/profile_screen.dart';
 
 final appRouter = GoRouter(
 
@@ -17,7 +17,10 @@ final appRouter = GoRouter(
       path: '/login',
       builder: (context, state) => LoginScreen(),
     ),
-
+    GoRoute(
+      path: '/profile',
+      builder: (context, state) => const ProfileScreen(),
+    ),
     GoRoute(
       path: '/players',
       builder: (context, state) => PlayerScreen(),

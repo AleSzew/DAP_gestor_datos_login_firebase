@@ -48,21 +48,14 @@ class DetailScreen extends ConsumerWidget {
               const SizedBox(height: 10),
               
               // Botón Eliminar 
-              ElevatedButton(
+                            ElevatedButton(
                 onPressed: () {
-                  // Traemos la lista del provider
-                  List<Player> listaActual = ref.read(playerProvider);
-                  // Creamos una copia modificable
-                  List<Player> listaNueva = List.from(listaActual);
-                  //  Sacamos al jugador de la lista
-                  listaNueva.remove(player);
-                  //  Guardamos los cambios en el provider usando el .state
                   ref.read(playerProvider.notifier).deletePlayer(player);
-
-                  context.pop();
+                  context.pop(); // Vuelve a la pantalla principal con GoRouter
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade100),
-                child: const Text("Eliminar")),
+                child: const Text("Eliminar"),
+              ),
             ],
           ),
         ),
